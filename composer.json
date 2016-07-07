@@ -1,17 +1,17 @@
 {
-    "name": "spatie/laravel-sluggable",
+    "name": "padosoft/laravel-sluggable",
     "description": "Generate slugs when saving Eloquent models",
     "keywords": [
-        "spatie",
+        "padosoft",
         "laravel-sluggable"
     ],
-    "homepage": "https://github.com/spatie/laravel-sluggable",
+    "homepage": "https://github.com/padosoft/laravel-sluggable",
     "license": "MIT",
     "authors": [
         {
-            "name": "Freek Van der Herten",
-            "email": "freek@spatie.be",
-            "homepage": "https://spatie.be",
+            "name": "Padosoft",
+            "email": "helpdesk@padosoft.com",
+            "homepage": "https://www.padosoft.com",
             "role": "Developer"
         }
     ],
@@ -27,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\Sluggable\\": "src"
+            "Padosoft\\Sluggable\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\Sluggable\\Test\\": "tests"
+            "Padosoft\\Sluggable\\Test\\": "tests"
         }
     },
     "scripts": {
