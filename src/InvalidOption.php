@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Sluggable;
+namespace Padosoft\Sluggable;
 
 use Exception;
 
@@ -8,7 +8,7 @@ class InvalidOption extends Exception
 {
     public static function missingFromField()
     {
-        return new static('Could not determinate which fields should be sluggified');
+        return new static('Could not determinate which fields should be sluggified or these fields are empty');
     }
 
     public static function missingSlugField()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Sluggable\Test\Integration;
+namespace Padosoft\Sluggable\Test\Integration;
 
 use File;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,7 +10,7 @@ use Orchestra\Testbench\TestCase as Orchestra;
 abstract class TestCase extends Orchestra
 {
     /**
-     * @var \Spatie\Sluggable\Test\Integration\TestModel
+     * @var \Padosoft\Sluggable\Test\Integration\TestModel
      */
     protected $testModel;
 
@@ -31,7 +31,8 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => $this->getTempDirectory().'/database.sqlite',
+            'database' => ':memory:',
+            //'database' => $this->getTempDirectory().'/database.sqlite',
             'prefix' => '',
         ]);
     }
@@ -41,26 +42,35 @@ abstract class TestCase extends Orchestra
      */
     protected function setUpDatabase(Application $app)
     {
-        file_put_contents($this->getTempDirectory().'/database.sqlite', null);
+     //   file_put_contents($this->getTempDirectory().'/database.sqlite', null);
 
         $app['db']->connection()->getSchemaBuilder()->create('test_models', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable();
             $table->string('other_field')->nullable();
             $table->string('url')->nullable();
+            $table->integer('testmodelrelation_id')->nullable();
+        });
+
+        $app['db']->connection()->getSchemaBuilder()->create('test_model_relations', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->nullable();
         });
     }
 
     protected function initializeDirectory(string $directory)
     {
+        return;
+        /*
         if (File::isDirectory($directory)) {
             File::deleteDirectory($directory);
         }
         File::makeDirectory($directory);
+        */
     }
 
     public function getTempDirectory() : string
     {
-        return __DIR__.'/temp';
+        return __DIR__.DIRECTORY_SEPARATOR.'temp';
     }
 }

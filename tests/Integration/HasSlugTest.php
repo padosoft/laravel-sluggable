@@ -1,8 +1,9 @@
 <?php
 
-namespace Spatie\Sluggable\Test\Integration;
+namespace Padosoft\Sluggable\Test\Integration;
 
-use Spatie\Sluggable\SlugOptions;
+use Padosoft\Sluggable\InvalidOption;
+use Padosoft\Sluggable\SlugOptions;
 
 class HasSlugTest extends TestCase
 {
@@ -17,9 +18,11 @@ class HasSlugTest extends TestCase
     /** @test */
     public function it_can_handle_null_values_when_creating_slugs()
     {
-        $model = TestModel::create(['name' => null]);
-
-        $this->assertEquals('-1', $model->url);
+        $model = new TestModel();
+        $model->setSlugOptions($model->getSlugOptions()->allowSlugIfAllSourceFieldsEmpty()->randomSlugsShouldBeNoLongerThan(30));
+        $model->name = null;
+        $model->save();
+        $this->assertEquals(30, strlen($model->url));
     }
 
     /** @test */
@@ -45,6 +48,24 @@ class HasSlugTest extends TestCase
     }
 
     /** @test */
+    public function it_will_update_the_slug_when_the_slug_is_set_to_empty()
+    {
+        $model = TestModel::create(['name' => 'this is a test']);
+        $this->assertEquals('this-is-a-test', $model->url);
+
+        $model->url = '';
+        $model->save();
+        $this->assertEquals('this-is-a-test', $model->url);
+    }
+
+    /** @test */
+    public function it_will_not_update_the_slug_when_the_slug_is_already_not_empty()
+    {
+        $model = TestModel::create(['name' => 'this is a test', 'url' => 'hello']);
+        $this->assertEquals('hello', $model->url);
+    }
+
+    /** @test */
     public function it_will_save_a_unique_slug_by_default()
     {
         TestModel::create(['name' => 'this is a test']);
@@ -58,10 +79,23 @@ class HasSlugTest extends TestCase
     /** @test */
     public function it_can_handle_empty_source_fields()
     {
-        foreach (range(1, 10) as $i) {
-            $model = TestModel::create(['name' => '']);
-            $this->assertEquals("-{$i}", $model->url);
-        }
+        $model = new TestModel();
+        $model->setSlugOptions($model->getSlugOptions()->allowSlugIfAllSourceFieldsEmpty()->randomSlugsShouldBeNoLongerThan(30));
+        $model->name = '';
+        $model->save();
+        $this->assertEquals(30, strlen($model->url));
+    }
+
+    /**
+     * @test
+     * @expectedException \Padosoft\Sluggable\InvalidOption
+     */
+    public function it_cannot_handle_empty_source_fields()
+    {
+        $model = new TestModel();
+        $model->setSlugOptions($model->getSlugOptions()->disallowSlugIfAllSourceFieldsEmpty());
+        $model->name = '';
+        $model->save();
     }
 
     /** @test */
@@ -71,7 +105,7 @@ class HasSlugTest extends TestCase
         {
             public function getSlugOptions(): SlugOptions
             {
-                return parent::getSlugOptions()->generateSlugsFrom(['name', 'other_field']);
+                return parent::getSlugOptions()->generateSlugsFrom([['name', 'other_field']]);
             }
         };
 
@@ -80,6 +114,30 @@ class HasSlugTest extends TestCase
         $model->save();
 
         $this->assertEquals('this-is-a-test-this-is-another-field', $model->url);
+    }
+
+    /** @test */
+    public function it_can_generate_slugs_from_relation_source_fields()
+    {
+        $modelRelation = TestModelRelation::create(['id' => 1, 'name' => 'relation name']);
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom([ ['testmodelrelation.name','name'] ]);
+            }
+
+            public function testmodelrelation()
+            {
+                return $this->belongsTo('\Padosoft\Sluggable\Test\Integration\TestModelRelation', 'testmodelrelation_id');
+            }
+        };
+
+        $model->name = 'this is a test';
+        $model->testmodelrelation_id = 1;
+        $model->save();
+
+        $this->assertEquals('relation-name-this-is-a-test', $model->url);
     }
 
     /** @test */

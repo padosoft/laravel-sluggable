@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Padosoft\Sluggable\HasSlug;
 use Padosoft\Sluggable\SlugOptions;
 
-class TestModel extends Model
+class TestModelRelation extends Model
 {
     use HasSlug;
 

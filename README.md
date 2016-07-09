@@ -1,13 +1,16 @@
 # Generate slugs when saving Eloquent models
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-sluggable.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-sluggable)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/padosoft/laravel-sluggable.svg?style=flat-square)](https://packagist.org/packages/padosoft/laravel-sluggable)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-sluggable/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-sluggable)
+[![Build Status](https://img.shields.io/travis/padosoft/laravel-sluggable/master.svg?style=flat-square)](https://travis-ci.org/padosoft/laravel-sluggable)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/a56f8c11-331f-4d3c-8724-77f55969f2f7.svg?style=flat-square)](https://insight.sensiolabs.com/projects/a56f8c11-331f-4d3c-8724-77f55969f2f7)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-sluggable.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-sluggable)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-sluggable.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-sluggable)
+[![Quality Score](https://img.shields.io/scrutinizer/g/padosoft/laravel-sluggable.svg?style=flat-square)](https://scrutinizer-ci.com/g/padosoft/laravel-sluggable)
+[![Total Downloads](https://img.shields.io/packagist/dt/padosoft/laravel-sluggable.svg?style=flat-square)](https://packagist.org/packages/padosoft/laravel-sluggable)
 
-This package provides a trait that will generate a unique slug when saving any Eloquent model. 
+This package provides a trait that will generate a unique slug when saving any Eloquent model.
+
+This package is based on [![spatie/laravel-sluggable](https://packagist.org/packages/spatie/laravel-sluggable)] (https://packagist.org/packages/spatie/laravel-sluggable)
+but with some adjustmanent.
 
 ```php
 $model = new EloquentModel();
@@ -19,18 +22,18 @@ echo $model->slug; // ouputs "activerecord-is-awesome"
 
 The slugs are generated with Laravels `str_slug` method, whereby spaces are converted to '-'.
 
-Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
+Padosoft is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://padosoft.be/opensource).
 
 ## Installation
 
 You can install the package via composer:
 ``` bash
-$ composer require spatie/laravel-sluggable
+$ composer require padosoft/laravel-sluggable
 ```
 
 ## Usage
 
-Your Eloquent models should use the `Spatie\Sluggable\HasSlug` trait and the `Spatie\Sluggable\SlugOptions` class.
+Your Eloquent models should use the `Padosoft\Sluggable\HasSlug` trait and the `Padosoft\Sluggable\SlugOptions` class.
 
 The trait contains an abstract method `getSlugOptions()` that you must implement yourself. 
 
@@ -41,8 +44,8 @@ Here's an example of how to implement the trait:
 
 namespace App;
 
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
+use Padosoft\Sluggable\HasSlug;
+use Padosoft\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Model;
 
 class YourEloquentModel extends Model
@@ -129,15 +132,15 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+If you discover any security related issues, please email help@padosoft.com instead of using the issue tracker.
 
 ## Credits
-
+- [Lorenzo Padovani](https://github.com/padosoft)
 - [Freek Van der Herten](https://github.com/freekmurze)
 - [All Contributors](../../contributors)
 
-## About Spatie
-Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
+## About Padosoft
+Padosoft (https://www.padosoft.com) is a web agency based in Florence, Italy.
 
 ## License
 
