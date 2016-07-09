@@ -2,6 +2,10 @@
 
 All Notable changes to `laravel-sluggable` will be documented in this file
 
+## 2.1.0 - 2016-07-09
+ - Added Sluggable Scope Helpers
+
+
 ## 2.0.0 - 2016-07-09
 **NOTE:**
 This package is based on [spatie/laravel-sluggable](https://packagist.org/packages/spatie/laravel-sluggable)
