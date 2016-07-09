@@ -32,7 +32,7 @@ $model = new EloquentModel();
 $model->name = 'activerecord is awesome';
 $model->save();
 
-echo $model->slug; // ouputs "activerecord-is-awesome"
+echo $model->slug; // outputs "activerecord-is-awesome"
 ```
 
 The slugs are generated with Laravels `str_slug` method, whereby spaces are converted to '-'.
@@ -180,6 +180,19 @@ $model->save(); //url stays "my name"
 //if you reset the slug and recall save it will regenerate the slug.
 $model->url = '';
 $model-save(); //url is now "changed-name";
+```
+
+## SluggableScope Helpers
+
+The package included some helper functions for working with models and their slugs.
+You can do things such as:
+
+```php
+$post = Post::whereSlug($slugString)->get();
+
+$post = Post::findBySlug($slugString);
+
+$post = Post::findBySlugOrFail($slugString);
 ```
 
 ## Change log

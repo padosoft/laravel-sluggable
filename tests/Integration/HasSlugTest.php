@@ -7,6 +7,65 @@ use Padosoft\Sluggable\SlugOptions;
 
 class HasSlugTest extends TestCase
 {
+
+    /**
+     * @test
+     */
+    public function scope_where_slug()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name')->saveSlugsTo('url');
+            }
+        };
+        $model->name = 'hello dad';
+        $query = $model->whereSlug('hello-dad');
+        $bindings = $query->getBindings();
+        $this->assertEquals(count($bindings), 1);
+        $sql = $query->toSql();
+        $this->assertEquals($sql, 'select * from "test_models" where "url" = ?');
+    }
+
+    /**
+     * @test
+     */
+    public function scope_find_by_slug_or_fail_ok()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name');
+            }
+        };
+        $model->name = 'hello dad';
+        $model->save();
+
+        $model2 = TestModel::findBySlugOrFail('hello-dad', ['id']);
+        $this->assertEquals($model->id, $model2->id);
+    }
+
+    /**
+     * @test
+     * * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function scope_find_by_slug_or_fail_ko()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name');
+            }
+        };
+        $model->name = 'hello dad';
+        $model->save();
+
+        TestModel::findBySlugOrFail('hello', ['id']);
+    }
+
     /** @test */
     public function it_will_save_a_slug_when_saving_a_model()
     {
@@ -240,4 +299,24 @@ class HasSlugTest extends TestCase
 
         $this->assertEquals('this-is-an-other-1', $model->url);
     }
+
+    /**
+     * @test
+     */
+    public function scope_find_by_slug()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name');
+            }
+        };
+        $model->name = 'hello dad';
+        $model->save();
+
+        $model2 = TestModel::findBySlug('hello-dad', ['id']);
+        $this->assertEquals($model->id, $model2->id);
+    }
+
 }

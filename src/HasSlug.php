@@ -219,4 +219,49 @@ trait HasSlug
             ->implode($separator);
         return $slugSourceString;
     }
+
+    /**
+     *
+     * SCOPE HELPERS
+     *
+     */
+
+    /**
+     * Query scope for finding a model by its slug field.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $scope
+     * @param string $slug
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereSlug($scope, $slug)
+    {
+        $this->slugOptions = $this->getSlugOptionsOrDefault();
+        return $scope->where($this->slugOptions->slugField, $slug);
+    }
+
+    /**
+     * Find a model by its slug field.
+     *
+     * @param string $slug
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static[]|static|null
+     */
+    public static function findBySlug($slug, array $columns = ['*'])
+    {
+        return static::whereSlug($slug)->first($columns);
+    }
+
+    /**
+     * Find a model by its slug field or throw an exception.
+     *
+     * @param string $slug
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public static function findBySlugOrFail($slug, array $columns = ['*'])
+    {
+        return static::whereSlug($slug)->firstOrFail($columns);
+    }
 }
