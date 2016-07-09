@@ -57,6 +57,8 @@ trait HasSlug
 
     /**
      * Generate a non unique slug for this record.
+     * @return string
+     * @throws InvalidOption
      */
     protected function generateNonUniqueSlug(): string
     {
@@ -69,6 +71,7 @@ trait HasSlug
 
     /**
      * Determine if a custom slug has been saved.
+     * @return bool
      */
     protected function hasCustomSlugBeenUsed(): bool
     {
@@ -82,6 +85,8 @@ trait HasSlug
 
     /**
      * Get the string that should be used as base for the slug.
+     * @return string
+     * @throws InvalidOption
      */
     protected function getSlugSourceString(): string
     {
@@ -100,14 +105,7 @@ trait HasSlug
             return str_random($this->slugOptions->maximumLength > $this->slugOptions->randomUrlLen ? $this->slugOptions->randomUrlLen : $this->slugOptions->maximumLength);
         }
 
-        $slugSourceString = collect($slugFrom)
-            ->map(function (string $fieldName) : string {
-                if ($fieldName==''){
-                    return '';
-                }
-                return data_get($this, $fieldName) ?? '';
-            })
-            ->implode($this->slugOptions->separator);
+        $slugSourceString = $this->getImplodeSourceString($slugFrom, $this->slugOptions->separator);
 
         return substr($slugSourceString, 0, $this->slugOptions->maximumLength);
     }
@@ -119,18 +117,19 @@ trait HasSlug
      */
     protected function getSlugFrom($fieldName)
     {
-        if(!is_array($fieldName) && trim($fieldName)==''){
+        if(!is_callable($fieldName) && !is_array($fieldName) && trim($fieldName)==''){
             return '';
         }
 
-        if(!is_array($fieldName) && (!data_get($this, $fieldName))){
+        if(!is_callable($fieldName) && !is_array($fieldName) && (!data_get($this, $fieldName))){
             return '';
         }elseif (!is_array($fieldName)){
             return $fieldName;
         }
 
         $slugSourceString = '';
-        for($i=0;$i<count($fieldName);$i++){
+        $countFieldName = count($fieldName);
+        for($i=0;$i<$countFieldName;$i++){
 
             $currFieldName = $fieldName[$i];
             if(!is_array($currFieldName) && trim($currFieldName)==''){
@@ -144,14 +143,7 @@ trait HasSlug
                 break;
             }
 
-            $slugSourceString = collect($currFieldName)
-                ->map(function (string $fieldName2) : string {
-                    if ($fieldName2==''){
-                        return '';
-                    }
-                    return data_get($this, $fieldName2) ?? '';
-                })
-                ->implode('');
+            $slugSourceString = $this->getImplodeSourceString($currFieldName, '');
 
             if($slugSourceString!=''){
                 $slugSourceString = $currFieldName;
@@ -164,6 +156,8 @@ trait HasSlug
 
     /**
      * Make the given slug unique.
+     * @param string $slug
+     * @return string
      */
     protected function makeSlugUnique(string $slug): string
     {
@@ -179,6 +173,8 @@ trait HasSlug
 
     /**
      * Determine if a record exists with the given slug.
+     * @param string $slug
+     * @return bool
      */
     protected function otherRecordExistsWithSlug(string $slug): bool
     {
@@ -189,6 +185,7 @@ trait HasSlug
 
     /**
      * This function will throw an exception when any of the options is missing or invalid.
+     * @throws InvalidOption
      */
     protected function guardAgainstInvalidSlugOptions()
     {
@@ -203,5 +200,23 @@ trait HasSlug
         if ($this->slugOptions->maximumLength <= 0) {
             throw InvalidOption::invalidMaximumLength();
         }
+    }
+
+    /**
+     * @param $slugFrom
+     * @param string $separator
+     * @return string
+     */
+    protected function getImplodeSourceString($slugFrom, string $separator) : string
+    {
+        $slugSourceString = collect($slugFrom)
+            ->map(function (string $fieldName) : string {
+                if ($fieldName == '') {
+                    return '';
+                }
+                return data_get($this, $fieldName) ?? '';
+            })
+            ->implode($separator);
+        return $slugSourceString;
     }
 }

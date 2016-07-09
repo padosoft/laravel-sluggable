@@ -2,6 +2,24 @@
 
 All Notable changes to `laravel-sluggable` will be documented in this file
 
+## 2.0.0 - 2016-07-09
+**NOTE:**
+This package is based on [spatie/laravel-sluggable](https://packagist.org/packages/spatie/laravel-sluggable)
+but with some adjustments for me and few  improvements. Here's a major changes:
+
+ - Added the ability to specify a source field through a model relation with dot notation. Ex.: ['category.name'] or ['customer.country.code'] where category, customer and country are model relations.
+ - Added the ability to specify multiple fields with priority to look up the first non-empty source field.  Ex.: In the example above, we set the look up to find a non empty source in model for slug in this order: title, first_name and last_name. Note: slug is set if at least one of these fields is not empty:
+```php
+SlugOptions::create()->generateSlugsFrom([
+						                'title',
+						                ['first_name', 'last_name'],
+							            ])
+```           
+ - Added option to set the behaviour when the source fields are all empty (thrown an exception or generate a random slug).
+ - Remove the abstract function getSlugOptions() and introduce the ability to set the trait with zero configuration with default options. The ability to define getSlugOptions() function in your model remained. 
+ - Added option to set slug separator
+ - Some other adjustments and fix
+
 ## 1.2.0 - 2016-06-13
 - Added the ability to generate slugs from a callable
 
