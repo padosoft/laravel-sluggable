@@ -233,7 +233,7 @@ trait HasSlug
      * @param string $slug
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeWhereSlug($scope, $slug)
+    public function scopeWhereSlug(\Illuminate\Database\Eloquent\Builder $scope, $slug)
     {
         $this->slugOptions = $this->getSlugOptionsOrDefault();
         return $scope->where($this->slugOptions->slugField, $slug);
