@@ -95,7 +95,7 @@ class YourEloquentModel extends Model
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
-            ->saveSlugsTo('slag');
+            ->saveSlugsTo('slug');
     }
 }
 ```
@@ -107,7 +107,7 @@ public function getSlugOptions() : SlugOptions
 {
     return SlugOptions::create()
         ->generateSlugsFrom(['first_name', 'last_name'])
-        ->saveSlugsTo('slag');
+        ->saveSlugsTo('slug');
 }
 ```
 Want to use relation field as the basis for a slug? No problem!
@@ -182,14 +182,14 @@ $model->url = '';
 $model-save(); //url is now "changed-name";
 ```
 
-### Custom slag (i.e.: manually set slug url)
+### Custom slug (i.e.: manually set slug url)
 
-If you want a custom slag write by hand, use the `saveCustomSlugsTo()` method to set the custom field: 
+If you want a custom slug write by hand, use the `saveCustomSlugsTo()` method to set the custom field: 
 ```php
   ->saveCustomSlugsTo('url-custom')
 ```
 
-Then, if you set the `url-custom` attribute in your model, the slag field will be set to same value.
+Then, if you set the `url-custom` attribute in your model, the slug field will be set to same value.
 In any case, check for correct url and uniquity will be performed to custom slug value.
 Example:
 ```php
@@ -203,7 +203,7 @@ $model = new class extends TestModel
 };
 $model->name = 'hello dad';
 $model->url_custom = 'this is a custom test';
-$model->save(); //the slag is 'this-is-a-custom-test' and not , 'hello-dad';
+$model->save(); //the slug is 'this-is-a-custom-test' and not , 'hello-dad';
 ```
 
 ## SluggableScope Helpers
