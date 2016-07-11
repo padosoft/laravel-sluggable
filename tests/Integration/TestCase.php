@@ -49,6 +49,7 @@ abstract class TestCase extends Orchestra
             $table->string('name')->nullable();
             $table->string('other_field')->nullable();
             $table->string('url')->nullable();
+            $table->string('url_custom')->nullable();
             $table->integer('testmodelrelation_id')->nullable();
         });
 

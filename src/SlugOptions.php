@@ -10,6 +10,9 @@ class SlugOptions
     /** @var string */
     public $slugField;
 
+    /** @var string */
+    public $slugCustomField;
+
     /** @var bool */
     public $generateUniqueSlugs = true;
 
@@ -17,7 +20,7 @@ class SlugOptions
     public $generateSlugIfAllSourceFieldsEmpty = true;
 
     /** @var int */
-    public $maximumLength = 250;
+    public $maximumLength = 251;
 
     /** @var string */
     public $separator = '-';
@@ -26,7 +29,9 @@ class SlugOptions
     public $randomUrlLen=50;
 
 
-
+    /**
+     * @return SlugOptions
+     */
     public static function create(): SlugOptions
     {
         return new static();
@@ -44,9 +49,24 @@ class SlugOptions
         return $this;
     }
 
+    /**
+     * @param string $fieldName
+     * @return SlugOptions
+     */
     public function saveSlugsTo(string $fieldName): SlugOptions
     {
         $this->slugField = $fieldName;
+
+        return $this;
+    }
+
+    /**
+     * @param string $fieldName
+     * @return SlugOptions
+     */
+    public function saveCustomSlugsTo(string $fieldName): SlugOptions
+    {
+        $this->slugCustomField = $fieldName;
 
         return $this;
     }
@@ -72,6 +92,10 @@ class SlugOptions
         return $this;
     }
 
+    /**
+     * @param int $maximumLength
+     * @return SlugOptions
+     */
     public function slugsShouldBeNoLongerThan(int $maximumLength): SlugOptions
     {
         $this->maximumLength = $maximumLength;
@@ -79,6 +103,10 @@ class SlugOptions
         return $this;
     }
 
+    /**
+     * @param int $maximumLength
+     * @return SlugOptions
+     */
     public function randomSlugsShouldBeNoLongerThan(int $maximumLength): SlugOptions
     {
         $this->randomUrlLen = $maximumLength;
@@ -86,6 +114,10 @@ class SlugOptions
         return $this;
     }
 
+    /**
+     * @param string $separator
+     * @return SlugOptions
+     */
     public function slugsSeparator(string $separator): SlugOptions
     {
         $this->separator = $separator ?? '-';
@@ -113,6 +145,7 @@ class SlugOptions
                 'id',
             ])
             ->saveSlugsTo('slug')
-            ->slugsShouldBeNoLongerThan(255);
+            ->saveCustomSlugsTo('slug_custom')
+            ->slugsShouldBeNoLongerThan(251);
     }
 }

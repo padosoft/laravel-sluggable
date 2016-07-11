@@ -7,6 +7,24 @@ use Padosoft\Sluggable\SlugOptions;
 
 class HasSlugTest extends TestCase
 {
+    /** @test */
+    public function it_will_save_a_custom_slug_when_saving_a_model()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name')->saveCustomSlugsTo('url_custom');
+            }
+        };
+        $model->name = 'hello dad';
+        $model->save();
+        $this->assertEquals('hello-dad', $model->url);
+
+        $model->url_custom = 'this is a custom test';
+        $model->save();
+        $this->assertEquals('this-is-a-custom-test', $model->url);
+    }
 
     /**
      * @test
@@ -17,7 +35,7 @@ class HasSlugTest extends TestCase
         {
             public function getSlugOptions(): SlugOptions
             {
-                return parent::getSlugOptions()->generateSlugsFrom('name')->saveSlugsTo('url');
+                return parent::getSlugOptions()->generateSlugsFrom('name')->saveSlugsTo('url')->saveCustomSlugsTo('url_custom');
             }
         };
         $model->name = 'hello dad';

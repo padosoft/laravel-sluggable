@@ -33,11 +33,9 @@ trait HasSlug
         $this->guardAgainstInvalidSlugOptions();
 
         $slug = $this->generateNonUniqueSlug();
-
         if ($this->slugOptions->generateUniqueSlugs) {
             $slug = $this->makeSlugUnique($slug);
         }
-
         $slugField = $this->slugOptions->slugField;
 
         $this->$slugField = $slug;
@@ -63,6 +61,13 @@ trait HasSlug
     protected function generateNonUniqueSlug(): string
     {
         if ($this->hasCustomSlugBeenUsed()) {
+            $slugField = $this->slugOptions->slugCustomField;
+            if(!$this->$slugField){
+                return '';
+            }
+            return str_slug($this->$slugField, $this->slugOptions->separator);
+        }
+        if ($this->hasSlugBeenUsed()) {
             $slugField = $this->slugOptions->slugField;
             return $this->$slugField ?? '';
         }
@@ -75,9 +80,22 @@ trait HasSlug
      */
     protected function hasCustomSlugBeenUsed(): bool
     {
+        $slugField = $this->slugOptions->slugCustomField;
+        if(!$slugField || trim($slugField)==''|| !$this->$slugField || trim($this->$slugField)==''){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Determine if a custom slug has been saved.
+     * @return bool
+     */
+    protected function hasSlugBeenUsed(): bool
+    {
         $slugField = $this->slugOptions->slugField;
 
-        if(!$this->$slugField || trim($this->$slugField)==''){
+        if(!$slugField || trim($slugField)==''|| !$this->$slugField || trim($this->$slugField)==''){
             return false;
         }
         return $this->getOriginal($slugField) != $this->$slugField;

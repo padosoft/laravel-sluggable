@@ -182,6 +182,30 @@ $model->url = '';
 $model-save(); //url is now "changed-name";
 ```
 
+### Custom slag (i.e.: manually set slug url)
+
+If you want a custom slag write by hand, use the `saveCustomSlugsTo()` method to set the custom field: 
+```php
+  ->saveCustomSlugsTo('url-custom')
+```
+
+Then, if you set the `url-custom` attribute in your model, the slag field will be set to same value.
+In any case, check for correct url and uniquity will be performed to custom slug value.
+Example:
+```php
+$model = new class extends TestModel
+{
+    public function getSlugOptions(): SlugOptions
+    {
+        return parent::getSlugOptions()->generateSlugsFrom('name')
+                                       ->saveCustomSlugsTo('url_custom');
+    }
+};
+$model->name = 'hello dad';
+$model->url_custom = 'this is a custom test';
+$model->save(); //the slag is 'this-is-a-custom-test' and not , 'hello-dad';
+```
+
 ## SluggableScope Helpers
 
 The package included some helper functions for working with models and their slugs.
