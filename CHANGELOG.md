@@ -2,6 +2,10 @@
 
 All Notable changes to `laravel-sluggable` will be documented in this file
 
+## 3.0.0 - 2018-10-23
+ - Added Laravel 5.7
+ - Update composer.json.
+ 
 ## 2.1.0 - 2016-07-09
  - Added Sluggable Scope Helpers
 
