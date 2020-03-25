@@ -3,6 +3,7 @@
 namespace Padosoft\Sluggable;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait HasSlug
 {
@@ -65,13 +66,13 @@ trait HasSlug
             if(!$this->$slugField){
                 return '';
             }
-            return str_slug($this->$slugField, $this->slugOptions->separator);
+            return Str::slug($this->$slugField, $this->slugOptions->separator);
         }
         if ($this->hasSlugBeenUsed()) {
             $slugField = $this->slugOptions->slugField;
             return $this->$slugField ?? '';
         }
-        return str_slug($this->getSlugSourceString(), $this->slugOptions->separator);
+        return Str::slug($this->getSlugSourceString(), $this->slugOptions->separator);
     }
 
     /**
@@ -120,7 +121,7 @@ trait HasSlug
                 throw InvalidOption::missingFromField();
             }
 
-            return str_random($this->slugOptions->maximumLength > $this->slugOptions->randomUrlLen ? $this->slugOptions->randomUrlLen : $this->slugOptions->maximumLength);
+            return Str::random($this->slugOptions->maximumLength > $this->slugOptions->randomUrlLen ? $this->slugOptions->randomUrlLen : $this->slugOptions->maximumLength);
         }
 
         $slugSourceString = $this->getImplodeSourceString($slugFrom, $this->slugOptions->separator);
@@ -207,7 +208,7 @@ trait HasSlug
      */
     protected function guardAgainstInvalidSlugOptions()
     {
-        if (!count($this->slugOptions->generateSlugFrom)) {
+        if (is_array($this->slugOptions->generateSlugFrom) && count($this->slugOptions->generateSlugFrom)<1) {
             throw InvalidOption::missingFromField();
         }
 

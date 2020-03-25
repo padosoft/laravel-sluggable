@@ -2,6 +2,7 @@
 
 namespace Padosoft\Sluggable\Test\Integration;
 
+use Illuminate\Support\Str;
 use Padosoft\Sluggable\InvalidOption;
 use Padosoft\Sluggable\SlugOptions;
 
@@ -81,7 +82,9 @@ class HasSlugTest extends TestCase
         $model->name = 'hello dad';
         $model->save();
 
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
         TestModel::findBySlugOrFail('hello', ['id']);
+
     }
 
     /** @test */
@@ -169,6 +172,7 @@ class HasSlugTest extends TestCase
      */
     public function it_cannot_handle_empty_source_fields()
     {
+        $this->expectException(\Padosoft\Sluggable\InvalidOption::class);
         $model = new TestModel();
         $model->setSlugOptions($model->getSlugOptions()->disallowSlugIfAllSourceFieldsEmpty());
         $model->name = '';
@@ -225,7 +229,7 @@ class HasSlugTest extends TestCase
             public function getSlugOptions(): SlugOptions
             {
                 return parent::getSlugOptions()->generateSlugsFrom(function (TestModel $model): string {
-                    return 'foo-' . str_slug($model->name);
+                    return 'foo-' . Str::slug($model->name);
                 });
             }
         };
@@ -279,7 +283,7 @@ class HasSlugTest extends TestCase
     public function it_can_handle_weird_characters_when_generating_the_slug(string $weirdCharacter, string $normalCharacter)
     {
         $model = TestModel::create(['name' => $weirdCharacter]);
-
+        dump($weirdCharacter.'-'.$normalCharacter.'-'.$model->url);
         $this->assertEquals($normalCharacter, $model->url);
     }
 
@@ -289,7 +293,7 @@ class HasSlugTest extends TestCase
             ['é', 'e'],
             ['è', 'e'],
             ['à', 'a'],
-            ['a€', 'a'],
+            ['a€', 'aeur'],
             ['ß', 'ss'],
             ['a/ ', 'a'],
         ];
