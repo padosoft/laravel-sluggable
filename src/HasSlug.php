@@ -63,16 +63,20 @@ trait HasSlug
     {
         if ($this->hasCustomSlugBeenUsed()) {
             $slugField = $this->slugOptions->slugCustomField;
-            if(!$this->$slugField){
+            if (!$this->$slugField) {
                 return '';
             }
-            return Str::slug($this->$slugField, $this->slugOptions->separator);
+            return !$this->slugOptions->slugifyCustomSlug ? $this->$slugField : Str::slug($this->$slugField, $this->slugOptions->separator);
         }
         if ($this->hasSlugBeenUsed()) {
             $slugField = $this->slugOptions->slugField;
             return $this->$slugField ?? '';
         }
-        return Str::slug($this->getSlugSourceString(), $this->slugOptions->separator);
+        $generatedSlug = $this->getSlugSourceString();
+        if (!$this->slugOptions->slugifySlugSourceString) {
+            return $generatedSlug;
+        }
+        return Str::slug($generatedSlug, $this->slugOptions->separator);
     }
 
     /**
@@ -82,7 +86,7 @@ trait HasSlug
     protected function hasCustomSlugBeenUsed(): bool
     {
         $slugField = $this->slugOptions->slugCustomField;
-        if(!$slugField || trim($slugField)==''|| !$this->$slugField || trim($this->$slugField)==''){
+        if (!$slugField || trim($slugField) == '' || !$this->$slugField || trim($this->$slugField) == '') {
             return false;
         }
         return true;
@@ -96,7 +100,7 @@ trait HasSlug
     {
         $slugField = $this->slugOptions->slugField;
 
-        if(!$slugField || trim($slugField)==''|| !$this->$slugField || trim($this->$slugField)==''){
+        if (!$slugField || trim($slugField) == '' || !$this->$slugField || trim($this->$slugField) == '') {
             return false;
         }
         return $this->getOriginal($slugField) != $this->$slugField;
@@ -116,8 +120,8 @@ trait HasSlug
 
         $slugFrom = $this->getSlugFrom($this->slugOptions->generateSlugFrom);
 
-        if(is_null($slugFrom) || (!is_array($slugFrom) && trim($slugFrom)=='')){
-            if(!$this->slugOptions->generateSlugIfAllSourceFieldsEmpty){
+        if (is_null($slugFrom) || (!is_array($slugFrom) && trim($slugFrom) == '')) {
+            if (!$this->slugOptions->generateSlugIfAllSourceFieldsEmpty) {
                 throw InvalidOption::missingFromField();
             }
 
@@ -136,35 +140,35 @@ trait HasSlug
      */
     protected function getSlugFrom($fieldName)
     {
-        if(!is_callable($fieldName) && !is_array($fieldName) && trim($fieldName)==''){
+        if (!is_callable($fieldName) && !is_array($fieldName) && trim($fieldName) == '') {
             return '';
         }
 
-        if(!is_callable($fieldName) && !is_array($fieldName) && (!data_get($this, $fieldName))){
+        if (!is_callable($fieldName) && !is_array($fieldName) && (!data_get($this, $fieldName))) {
             return '';
-        }elseif (!is_array($fieldName)){
+        } elseif (!is_array($fieldName)) {
             return $fieldName;
         }
 
         $slugSourceString = '';
         $countFieldName = count($fieldName);
-        for($i=0;$i<$countFieldName;$i++){
+        for ($i = 0; $i < $countFieldName; $i++) {
 
             $currFieldName = $fieldName[$i];
-            if(!is_array($currFieldName) && trim($currFieldName)==''){
+            if (!is_array($currFieldName) && trim($currFieldName) == '') {
                 continue;
             }
-            if (!is_array($currFieldName) && (!data_get($this, $currFieldName))){
+            if (!is_array($currFieldName) && (!data_get($this, $currFieldName))) {
                 continue;
             }
-            if (!is_array($currFieldName) && data_get($this, $currFieldName)){
+            if (!is_array($currFieldName) && data_get($this, $currFieldName)) {
                 $slugSourceString = $currFieldName;
                 break;
             }
 
             $slugSourceString = $this->getImplodeSourceString($currFieldName, '');
 
-            if($slugSourceString!=''){
+            if ($slugSourceString != '') {
                 $slugSourceString = $currFieldName;
                 break;
             }
@@ -184,7 +188,7 @@ trait HasSlug
         $i = 1;
 
         while ($this->otherRecordExistsWithSlug($slug) || $slug === '') {
-            $slug = $originalSlug.$this->slugOptions->separator.$i++;
+            $slug = $originalSlug . $this->slugOptions->separator . $i++;
         }
 
         return $slug;
@@ -197,7 +201,7 @@ trait HasSlug
      */
     protected function otherRecordExistsWithSlug(string $slug): bool
     {
-        return (bool) static::where($this->slugOptions->slugField, $slug)
+        return (bool)static::where($this->slugOptions->slugField, $slug)
             ->where($this->getKeyName(), '!=', $this->getKey() ?? '0')
             ->first();
     }
@@ -208,7 +212,7 @@ trait HasSlug
      */
     protected function guardAgainstInvalidSlugOptions()
     {
-        if (is_array($this->slugOptions->generateSlugFrom) && count($this->slugOptions->generateSlugFrom)<1) {
+        if (is_array($this->slugOptions->generateSlugFrom) && count($this->slugOptions->generateSlugFrom) < 1) {
             throw InvalidOption::missingFromField();
         }
 
@@ -226,10 +230,10 @@ trait HasSlug
      * @param string $separator
      * @return string
      */
-    protected function getImplodeSourceString($slugFrom, string $separator) : string
+    protected function getImplodeSourceString($slugFrom, string $separator): string
     {
         $slugSourceString = collect($slugFrom)
-            ->map(function (string $fieldName) : string {
+            ->map(function (string $fieldName): string {
                 if ($fieldName == '') {
                     return '';
                 }

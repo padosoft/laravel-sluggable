@@ -26,8 +26,13 @@ class SlugOptions
     public $separator = '-';
 
     /** @var int */
-    public $randomUrlLen=50;
+    public $randomUrlLen = 50;
 
+    /** @var bool */
+    public $slugifySlugSourceString = true;//if setted to false don't call Str::slug on the slug generated automatically
+
+    /** @var bool */
+    public $slugifyCustomSlug = true;//if setted to false don't call Str::slug on the slug custom field
 
     /**
      * @return SlugOptions
@@ -35,6 +40,28 @@ class SlugOptions
     public static function create(): SlugOptions
     {
         return new static();
+    }
+
+    /**
+     * @param bool $bool
+     * @return $this
+     */
+    public function slugifySourceString($bool)
+    {
+        $this->slugifySlugSourceString = $bool ? true : false;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $bool
+     * @return $this
+     */
+    public function slugifyCustomSlug($bool)
+    {
+        $this->slugifyCustomSlug = $bool ? true : false;
+
+        return $this;
     }
 
     /**
