@@ -22,9 +22,28 @@ class HasSlugTest extends TestCase
         $model->save();
         $this->assertEquals('hello-dad', $model->url);
 
-        $model->url_custom = 'this is a custom test';
+        $model->url_custom = 'this is a custom/test';
         $model->save();
-        $this->assertEquals('this-is-a-custom-test', $model->url);
+        $this->assertEquals('this-is-a-customtest', $model->url);
+    }
+
+    /** @test */
+    public function it_will_save_a_custom_slug_without_escaping_it()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name')->saveCustomSlugsTo('url_custom')->slugifyCustomSlug(false);
+            }
+        };
+        $model->name = 'hello dad';
+        $model->save();
+        $this->assertEquals('hello-dad', $model->url);
+
+        $model->url_custom = 'this/is/a/custom-test';
+        $model->save();
+        $this->assertEquals('this/is/a/custom-test', $model->url);
     }
 
     /**
@@ -90,9 +109,25 @@ class HasSlugTest extends TestCase
     /** @test */
     public function it_will_save_a_slug_when_saving_a_model()
     {
-        $model = TestModel::create(['name' => 'this is a test']);
+        $model = TestModel::create(['name' => 'this/is a test']);
 
-        $this->assertEquals('this-is-a-test', $model->url);
+        $this->assertEquals('thisis-a-test', $model->url);
+    }
+
+    /** @test */
+    public function it_will_save_a_slug_without_escapes()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->generateSlugsFrom('name')->slugifySourceString(false);
+            }
+        };
+        $model->name = 'this/is-a-test';
+        $model->save();
+
+        $this->assertEquals('this/is-a-test', $model->url);
     }
 
     /** @test */
