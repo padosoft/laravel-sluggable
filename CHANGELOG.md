@@ -2,6 +2,13 @@
 
 All Notable changes to `laravel-sluggable` will be documented in this file
 
+## 3.5.0 - 2022-04-06
+ - Added Laravel 9
+ - Update composer.json.
+
+## 3.4.0 - 2021-09-12
+- Update composer.json.
+
 ## 3.0.0 - 2018-10-23
  - Added Laravel 5.7
  - Update composer.json.
