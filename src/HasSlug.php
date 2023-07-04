@@ -66,7 +66,7 @@ trait HasSlug
             if (!$this->$slugField) {
                 return '';
             }
-            return !$this->slugOptions->slugifyCustomSlug ? $this->$slugField : Str::slug($this->$slugField, $this->slugOptions->separator);
+            return !$this->slugOptions->slugifyCustomSlug ? $this->$slugField : Str::slug($this->$slugField, $this->slugOptions->separator, $this->slugOptions->language_code, $this->slugOptions->dictionary);
         }
         if ($this->hasSlugBeenUsed()) {
             $slugField = $this->slugOptions->slugField;
