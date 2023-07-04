@@ -2,6 +2,14 @@
 
 All Notable changes to `laravel-sluggable` will be documented in this file
 
+## 3.6.0 - 2023-03-21
+- Added slugifyUseLanguage to SlugOption
+- Added slugifyUseDictionary to SlugOption
+
+## 3.6.0 - 2023-03-21
+- Added Laravel 10
+- Update composer.json.
+
 ## 3.5.0 - 2022-04-06
  - Added Laravel 9
  - Update composer.json.

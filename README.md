@@ -128,6 +128,25 @@ public function category()
 }
 ```
 
+If you want to use a specific language for the slug creation
+```php
+public function getSlugOptions() : SlugOptions
+{
+    return SlugOptions::create()
+        ->slugifyUseLanguage('jp')
+        ->saveSlugsTo('slug');
+}
+```
+If you want to use a specific convertion dictionary
+```php
+public function getSlugOptions() : SlugOptions
+{
+    return SlugOptions::create()
+        ->slugifyUseDictionary(['@'=>'at','['=>'quad'])
+        ->saveSlugsTo('slug');
+}
+```
+
 It support chaining for relation so you can also pass a customer..
 
 

@@ -322,6 +322,84 @@ class HasSlugTest extends TestCase
         $this->assertEquals($normalCharacter, $model->url);
     }
 
+    /**
+     * @test
+     * @dataProvider differentLanguagesProvider
+     */
+    public function it_can_handle_different_languages($language_code,string $weirdCharacter, string $normalCharacter)
+    {
+        $model = new class extends TestModel
+        {
+            public $language_code;
+            public function getSlugOptions(): SlugOptions
+            {
+                $option=parent::getSlugOptions();
+                if ($this->language_code!=='')
+                {
+                    $option->slugifyUseLanguage($this->language_code);
+                }
+
+                return $option;
+            }
+        };
+
+        $model->language_code=$language_code;
+
+
+        $model->name = $weirdCharacter;
+        $model->save();
+        $this->assertEquals($normalCharacter, $model->url);
+    }
+
+    public function differentLanguagesProvider()
+    {
+        return [
+            ['', 'aaaaà','aaaaa'],
+            ['en', 'aaaaà','aaaaa'],
+            ['ru', 'Женщины','zhenschiny'],
+            [null, 'сумки','сумки'],
+            ['cn', '女士','nu-shi'],
+            [null, '女士','女士'],
+            ['cn', 'レディース','redeisu'],
+            [null, 'レディース','レディース'],
+            ['ko', '여성','yeoseong'],
+            [null, '여성','여성'],
+        ];
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_handle_dictionary_when_generating_the_slug()
+    {
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->slugifyUseDictionary(['#'=>'hash']);
+            }
+        };
+
+        $model->name = 'pippo@aaa#';
+        $model->save();
+
+        $this->assertEquals('pippoaaa-hash', $model->url);
+
+        $model = new class extends TestModel
+        {
+            public function getSlugOptions(): SlugOptions
+            {
+                return parent::getSlugOptions()->slugifyUseDictionary(['@'=>'at','#'=>'hash']);
+            }
+        };
+
+        $model->name = 'pippo@aaa#';
+        $model->save();
+
+        $this->assertEquals('pippo-at-aaa-hash', $model->url);
+    }
+
+
     public function weirdCharacterProvider()
     {
         return [

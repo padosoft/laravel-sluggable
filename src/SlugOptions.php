@@ -35,11 +35,46 @@ class SlugOptions
     public $slugifyCustomSlug = true;//if setted to false don't call Str::slug on the slug custom field
 
     /**
+     * @var ?string
+     */
+    public $language_code = 'en';//set the referred language used by Str::slug
+
+    /**
+     * @var array<string, string>
+     */
+    public $dictionary = ['@' => 'at'];//dictionary used to convert characters
+
+    /**
      * @return SlugOptions
      */
     public static function create(): SlugOptions
     {
         return new static();
+    }
+
+    /**
+     * @param ?string $language_code INFO: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+     * @return $this
+     */
+    public function slugifyUseLanguage($language_code)
+    {
+        $this->language_code=$language_code;
+
+        return $this;
+    }
+
+    /**
+     * @param array<string, string> $dictionary
+     * @return $this
+     */
+    public function slugifyUseDictionary($dictionary)
+    {
+        if (is_array($dictionary))
+        {
+            $this->dictionary=$dictionary;
+        }
+
+        return $this;
     }
 
     /**

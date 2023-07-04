@@ -76,7 +76,8 @@ trait HasSlug
         if (!$this->slugOptions->slugifySlugSourceString) {
             return $generatedSlug;
         }
-        return Str::slug($generatedSlug, $this->slugOptions->separator);
+
+        return Str::slug($generatedSlug, $this->slugOptions->separator, $this->slugOptions->language_code, $this->slugOptions->dictionary);
     }
 
     /**
@@ -115,7 +116,7 @@ trait HasSlug
     {
         if (is_callable($this->slugOptions->generateSlugFrom)) {
             $slugSourceString = call_user_func($this->slugOptions->generateSlugFrom, $this);
-            return substr($slugSourceString, 0, $this->slugOptions->maximumLength);
+            return mb_substr($slugSourceString, 0, $this->slugOptions->maximumLength);
         }
 
         $slugFrom = $this->getSlugFrom($this->slugOptions->generateSlugFrom);
@@ -130,7 +131,7 @@ trait HasSlug
 
         $slugSourceString = $this->getImplodeSourceString($slugFrom, $this->slugOptions->separator);
 
-        return substr($slugSourceString, 0, $this->slugOptions->maximumLength);
+        return mb_substr($slugSourceString, 0, $this->slugOptions->maximumLength);
     }
 
     /**
@@ -216,7 +217,7 @@ trait HasSlug
             throw InvalidOption::missingFromField();
         }
 
-        if (!strlen($this->slugOptions->slugField)) {
+        if (!mb_strlen($this->slugOptions->slugField)) {
             throw InvalidOption::missingSlugField();
         }
 
