@@ -1,6 +1,11 @@
 # Changelog
 
 All Notable changes to `laravel-sluggable` will be documented in this file
+## 3.8.0 - 2024-05-20
+- Added support for laravel 12
+
+## 3.7.0 - 2024-05-20
+- Added support for laravel 11
 
 ## 3.6.1 - 2023-07-04
 - Added slugifyUseLanguage to SlugOption
